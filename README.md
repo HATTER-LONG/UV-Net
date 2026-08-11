@@ -28,6 +28,77 @@ For CPU-only environments, the CPU-version of the dgl has to be installed manual
 conda install -c dglteam dgl=0.6.1=py39_0
 ```
 
+### Modern PyTorch/PyG environment (Blackwell GPUs)
+
+The original environment above remains the reference DGL implementation. A
+separate modern environment can be used with the PyG MFCAD pipeline:
+
+```
+source .venv-gpu/bin/activate
+python gpu_smoke_test.py
+```
+
+Convert the official DGL MFCAD graphs once with the original environment:
+
+```
+DGLBACKEND=pytorch .venv/bin/python -m process.convert_mfcad_dgl_to_npz \
+  ./data/mfcad --workers 8
+```
+
+Run a short GPU training check:
+
+```
+.venv-gpu/bin/python segmentation_pyg.py train \
+  --dataset_path ./data/mfcad \
+  --max_epochs 1 --batch_size 16 --num_workers 0 \
+  --limit_train_batches 10 --limit_val_batches 2 \
+  --accelerator gpu --devices 1 --precision 32-true \
+  --experiment_name mfcad-pyg-smoke
+```
+
+After the smoke test succeeds, run the complete training/validation splits:
+
+```
+.venv-gpu/bin/python segmentation_pyg.py train \
+  --dataset_path ./data/mfcad \
+  --max_epochs 100 --batch_size 64 --num_workers 4 \
+  --accelerator gpu --devices 1 --precision 32-true --seed 42 \
+  --experiment_name mfcad-pyg
+```
+
+Evaluate the checkpoint selected by minimum validation loss on the complete
+test split (replace the timestamp with the directory printed by training):
+
+```
+.venv-gpu/bin/python segmentation_pyg.py test \
+  --dataset_path ./data/mfcad \
+  --batch_size 64 --num_workers 4 \
+  --accelerator gpu --devices 1 --precision 32-true --seed 42 \
+  --checkpoint results/mfcad-pyg/<timestamp>/best.ckpt
+```
+
+Add a readable comparison of ground-truth and predicted class IDs for the first
+three CAD samples with:
+
+```
+.venv-gpu/bin/python segmentation_pyg.py test \
+  --dataset_path ./data/mfcad --batch_size 64 --num_workers 4 \
+  --accelerator gpu --devices 1 --precision 32-true --seed 42 \
+  --checkpoint results/mfcad-pyg/<timestamp>/best.ckpt \
+  --verbose_predictions --prediction_samples 3
+```
+
+Add `--prediction_errors_only` to scan the test split, skip fully correct CAD
+samples, and show only misclassified faces from the first requested number of
+samples containing errors. Detailed output is disabled by default and does not
+change model predictions or metrics.
+
+The modern loader uses `drop_last=True` only for training and evaluates every
+validation/test sample. Use `--precision bf16-mixed` after establishing an FP32
+baseline to enable mixed precision on supported GPUs. The short command above
+is only a pipeline check; use the full split and the target epoch count when
+reporting model quality.
+
 ## Training
 
 The classification model can be trained using:

@@ -1,0 +1,15 @@
+# Install PyTorch first from its official CUDA 12.8 index:
+# uv pip install --python .venv-gpu/bin/python torch==2.8.0 \
+#   --index-url https://download.pytorch.org/whl/cu128
+# Install the optional max-pooling acceleration wheel separately:
+# uv pip install --python .venv-gpu/bin/python torch-scatter==2.1.2 \
+#   --find-links https://data.pyg.org/whl/torch-2.8.0+cu128.html
+
+torch-geometric==2.7.0
+lightning==2.6.5
+numpy==2.5.2
+scipy==1.18.0
+scikit-learn==1.9.0
+tensorboard==2.21.0
+torchmetrics==1.9.0
+tqdm==4.70.0
