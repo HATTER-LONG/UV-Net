@@ -1,0 +1,17 @@
+{
+  "venvPath": ".",
+  "venv": ".venv-gpu",
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "off",
+  "exclude": [
+    ".cache",
+    ".venv",
+    ".venv-gpu",
+    ".ruff_cache",
+    "**/__pycache__",
+    "data"
+  ],
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none",
+  "reportMissingTypeStubs": "none"
+}

@@ -1,0 +1,31 @@
+{
+  "languages": {
+    "Python": {
+      "language_servers": [
+        "basedpyright",
+        "ruff",
+        "!pyright",
+        "!pylsp",
+        "!ty"
+      ]
+    }
+  },
+  "lsp": {
+    "basedpyright": {
+      "settings": {
+        "python": {
+          "pythonPath": ".venv-gpu/bin/python"
+        },
+        "basedpyright.analysis": {
+          "diagnosticMode": "openFilesOnly",
+          "inlayHints": {
+            "callArgumentNames": false,
+            "functionReturnTypes": false,
+            "genericTypes": false,
+            "variableTypes": false
+          }
+        }
+      }
+    }
+  }
+}

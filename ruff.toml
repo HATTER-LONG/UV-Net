@@ -1,0 +1,12 @@
+target-version = "py312"
+
+exclude = [
+  ".cache",
+  ".venv",
+  ".venv-gpu",
+  "data",
+]
+
+[lint]
+# Keep only high-confidence syntax and name errors for this dynamic ML codebase.
+select = ["E9", "F63", "F7", "F82"]
